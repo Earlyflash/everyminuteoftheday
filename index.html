@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Every Minute of the Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #f0f6fc;
+        }
+
+        .container {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            max-width: fit-content;
+        }
+
+        .grid-container {
+            display: flex;
+            gap: 2px;
+            align-items: flex-start;
+        }
+
+        .hour-labels {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-right: 10px;
+            padding-top: 20px;
+        }
+
+        .hour-label {
+            width: 40px;
+            height: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 11px;
+            color: #8b949e;
+        }
+
+        .grid-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .minute-labels {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 5px;
+            padding-left: 0;
+        }
+
+        .minute-label {
+            width: 10px;
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #8b949e;
+        }
+
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .row {
+            display: flex;
+            gap: 2px;
+        }
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 2px;
+            transition: all 0.1s ease;
+        }
+
+        .cell:hover {
+            border-color: #58a6ff;
+            transform: scale(1.2);
+        }
+
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 2px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            background-color: #238636;
+            color: #fff;
+            border: 1px solid #2ea043;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+        }
+
+        button:active {
+            background-color: #1f7a2e;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .slider-label {
+            font-size: 14px;
+            color: #c9d1d9;
+            min-width: 120px;
+        }
+
+        .slider-value {
+            font-size: 14px;
+            color: #f0f6fc;
+            font-weight: 500;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            height: 6px;
+            background: #21262d;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #238636;
+            border: 2px solid #2ea043;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #2ea043;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #238636;
+            border: 2px solid #2ea043;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #2ea043;
+        }
+
+        .stats {
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-label {
+            color: #8b949e;
+            font-size: 12px;
+        }
+
+        .stat-value {
+            color: #f0f6fc;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .graph-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+        }
+
+        .graph-title {
+            color: #f0f6fc;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        #graphCanvas {
+            width: 100%;
+            max-width: 800px;
+            height: 300px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+        }
+
+        .table-title {
+            color: #f0f6fc;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #c9d1d9;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #30363d;
+        }
+
+        th {
+            background-color: #21262d;
+            color: #f0f6fc;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #21262d;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Every Minute of the Day</h1>
+    <div class="container">
+        <div class="grid-container">
+            <div class="hour-labels">
+                <!-- Hour labels will be generated by JavaScript -->
+            </div>
+            <div class="grid-wrapper">
+                <div class="minute-labels">
+                    <!-- Minute labels will be generated by JavaScript -->
+                </div>
+                <div class="grid" id="grid">
+                    <!-- Grid will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color"></div>
+                <span>Empty (0)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #0e4429;"></div>
+                <span>Low (1-3)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #006d32;"></div>
+                <span>Medium (4-6)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #26a641;"></div>
+                <span>High (7-9)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #40c463;"></div>
+                <span>Max (10)</span>
+            </div>
+        </div>
+        <div class="controls">
+            <div class="slider-container">
+                <label class="slider-label" for="cellCountSlider">Events per day:</label>
+                <input type="range" id="cellCountSlider" min="1" max="50" value="1">
+                <span class="slider-value" id="sliderValue">1</span>
+            </div>
+            <button id="randomCellBtn">Process additional day</button>
+            <button id="fillAllCellsBtn">Fill All Cells</button>
+            <button id="clearBtn" style="background-color: #da3633; border-color: #f85149;">Clear Simulation</button>
+        </div>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Days</div>
+                <div class="stat-value" id="clickCount">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Empty Cells (Value: 0)</div>
+                <div class="stat-value" id="emptyCellCount">1440</div>
+            </div>
+        </div>
+        <div class="graph-container">
+            <div class="graph-title">Remaining Empty minutes vs Days elapsed</div>
+            <canvas id="graphCanvas"></canvas>
+        </div>
+        <div class="table-container">
+            <div class="table-title">Fill Progress</div>
+            <table id="progressTable">
+                <thead>
+                    <tr>
+                        <th>Iteration</th>
+                        <th>Number of cells added</th>
+                        <th>Number of days</th>
+                        <th>Days elapsed for last cell</th>
+                    </tr>
+                </thead>
+                <tbody id="progressTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const hourLabels = document.querySelector('.hour-labels');
+        const minuteLabels = document.querySelector('.minute-labels');
+        const randomCellBtn = document.getElementById('randomCellBtn');
+        const cellCountSlider = document.getElementById('cellCountSlider');
+        const sliderValue = document.getElementById('sliderValue');
+        const clickCount = document.getElementById('clickCount');
+        const emptyCellCount = document.getElementById('emptyCellCount');
+        const fillAllCellsBtn = document.getElementById('fillAllCellsBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const graphCtx = graphCanvas.getContext('2d');
+        const progressTableBody = document.getElementById('progressTableBody');
+
+        // Track button clicks
+        let buttonClickCount = 0;
+        let isFilling = false;
+        let fillTimeoutId = null;
+        
+        // Track graph data points: [{clicks, emptyCells}, ...]
+        const graphData = [];
+        
+        // Track iterations for table
+        let currentIteration = 0;
+        let iterationStartClicks = 0;
+        let iterationStartEmptyCells = 0;
+
+        // Store cell values: 2D array [hour][minute] = value (0-10)
+        const cellValues = [];
+        for (let hour = 0; hour < 24; hour++) {
+            cellValues[hour] = [];
+            for (let minute = 0; minute < 60; minute++) {
+                cellValues[hour][minute] = 0;
+            }
+        }
+
+        // Function to get color based on value (0-10)
+        // 0 = blank/dark (#21262d), 10 = bright green (#40c463)
+        function getColorForValue(value) {
+            if (value === 0) {
+                return '#21262d'; // Blank/dark
+            }
+            
+            // Interpolate from dark green to bright green
+            // Value 1-10 maps to a gradient
+            const minColor = { r: 14, g: 68, b: 41 };   // #0e4429 (dark green)
+            const maxColor = { r: 64, g: 196, b: 99 };  // #40c463 (bright green)
+            
+            const ratio = value / 10;
+            const r = Math.round(minColor.r + (maxColor.r - minColor.r) * ratio);
+            const g = Math.round(minColor.g + (maxColor.g - minColor.g) * ratio);
+            const b = Math.round(minColor.b + (maxColor.b - minColor.b) * ratio);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Function to color a specific cell based on its value
+        function colorCell(hour, minute) {
+            const cell = document.querySelector(`[data-hour="${hour}"][data-minute="${minute}"]`);
+            if (cell) {
+                const value = cellValues[hour][minute];
+                const color = getColorForValue(value);
+                cell.style.backgroundColor = color;
+                cell.setAttribute('data-value', value);
+                cell.title = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} - ${value}`;
+            }
+        }
+
+        // Function to randomly select a cell and add 1 to its value
+        function addRandomCell() {
+            const hour = Math.floor(Math.random() * 24);
+            const minute = Math.floor(Math.random() * 60);
+            
+            // Increment value, but cap at 10
+            if (cellValues[hour][minute] < 10) {
+                cellValues[hour][minute]++;
+                colorCell(hour, minute);
+            }
+        }
+
+        // Function to count cells with value 0
+        function countEmptyCells() {
+            let count = 0;
+            for (let hour = 0; hour < 24; hour++) {
+                for (let minute = 0; minute < 60; minute++) {
+                    if (cellValues[hour][minute] === 0) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        // Function to update the empty cell counter
+        function updateEmptyCellCount() {
+            emptyCellCount.textContent = countEmptyCells();
+        }
+
+        // Function to add a data point to the graph
+        function addGraphDataPoint() {
+            const emptyCells = countEmptyCells();
+            graphData.push({
+                clicks: buttonClickCount,
+                emptyCells: emptyCells
+            });
+            drawGraph();
+        }
+
+        // Function to draw the graph
+        function drawGraph() {
+            if (graphData.length === 0) return;
+
+            const padding = 40;
+            const width = graphCanvas.width;
+            const height = graphCanvas.height;
+            
+            // Set canvas size
+            graphCanvas.width = graphCanvas.offsetWidth;
+            graphCanvas.height = 300;
+            const w = graphCanvas.width;
+            const h = graphCanvas.height;
+
+            // Clear canvas
+            graphCtx.clearRect(0, 0, w, h);
+            graphCtx.fillStyle = '#0d1117';
+            graphCtx.fillRect(0, 0, w, h);
+
+            if (graphData.length === 0) return;
+
+            // Find max values for scaling
+            const maxClicks = Math.max(...graphData.map(d => d.clicks), 1);
+            const maxEmptyCells = Math.max(...graphData.map(d => d.emptyCells), 1);
+
+            const graphWidth = w - padding * 2;
+            const graphHeight = h - padding * 2;
+
+            // Draw axes
+            graphCtx.strokeStyle = '#30363d';
+            graphCtx.lineWidth = 1;
+            graphCtx.beginPath();
+            graphCtx.moveTo(padding, padding);
+            graphCtx.lineTo(padding, h - padding);
+            graphCtx.lineTo(w - padding, h - padding);
+            graphCtx.stroke();
+
+            // Draw axis labels
+            graphCtx.fillStyle = '#8b949e';
+            graphCtx.font = '12px sans-serif';
+            graphCtx.textAlign = 'center';
+            graphCtx.fillText('Days elapsed', w / 2, h - 10);
+            graphCtx.save();
+            graphCtx.translate(15, h / 2);
+            graphCtx.rotate(-Math.PI / 2);
+            graphCtx.fillText('Remaining Empty minutes', 0, 0);
+            graphCtx.restore();
+
+            // Draw horizontal grid lines
+            graphCtx.strokeStyle = '#21262d';
+            graphCtx.lineWidth = 0.5;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (graphHeight / 5) * i;
+                graphCtx.beginPath();
+                graphCtx.moveTo(padding, y);
+                graphCtx.lineTo(w - padding, y);
+                graphCtx.stroke();
+            }
+
+            // Draw vertical grid lines at every 500 clicks
+            graphCtx.strokeStyle = '#30363d';
+            graphCtx.lineWidth = 0.5;
+            const clickInterval = 500;
+            let clickValue = clickInterval;
+            while (clickValue <= maxClicks) {
+                const x = padding + (clickValue / maxClicks) * graphWidth;
+                graphCtx.beginPath();
+                graphCtx.moveTo(x, padding);
+                graphCtx.lineTo(x, h - padding);
+                graphCtx.stroke();
+                clickValue += clickInterval;
+            }
+
+            // Draw data points and line
+            if (graphData.length > 0) {
+                graphCtx.strokeStyle = '#40c463';
+                graphCtx.lineWidth = 2;
+                graphCtx.beginPath();
+
+                graphData.forEach((point, index) => {
+                    const x = padding + (point.clicks / maxClicks) * graphWidth;
+                    const y = h - padding - (point.emptyCells / maxEmptyCells) * graphHeight;
+
+                    if (index === 0) {
+                        graphCtx.moveTo(x, y);
+                    } else {
+                        graphCtx.lineTo(x, y);
+                    }
+                });
+
+                graphCtx.stroke();
+
+                // Draw points
+                graphCtx.fillStyle = '#40c463';
+                graphData.forEach(point => {
+                    const x = padding + (point.clicks / maxClicks) * graphWidth;
+                    const y = h - padding - (point.emptyCells / maxEmptyCells) * graphHeight;
+                    graphCtx.beginPath();
+                    graphCtx.arc(x, y, 3, 0, Math.PI * 2);
+                    graphCtx.fill();
+                });
+            }
+
+            // Draw axis value labels
+            graphCtx.fillStyle = '#8b949e';
+            graphCtx.font = '10px sans-serif';
+            graphCtx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const value = Math.round((maxEmptyCells / 5) * (5 - i));
+                const y = padding + (graphHeight / 5) * i;
+                graphCtx.fillText(value.toString(), padding - 5, y + 3);
+            }
+
+            graphCtx.textAlign = 'center';
+            for (let i = 0; i <= 5; i++) {
+                const value = Math.round((maxClicks / 5) * i);
+                const x = padding + (graphWidth / 5) * i;
+                graphCtx.fillText(value.toString(), x, h - padding + 15);
+            }
+        }
+
+        // Function to add a row to the progress table
+        function addTableRow(iteration, cellsAdded, clicks, daysForLastCell) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${iteration}</td>
+                <td>${cellsAdded}</td>
+                <td>${clicks}</td>
+                <td>${daysForLastCell !== undefined ? daysForLastCell : '-'}</td>
+            `;
+            progressTableBody.appendChild(row);
+        }
+
+        // Function to clear the simulation (preserves table)
+        function clearSimulation() {
+            // Reset all cell values to 0
+            for (let hour = 0; hour < 24; hour++) {
+                for (let minute = 0; minute < 60; minute++) {
+                    cellValues[hour][minute] = 0;
+                    colorCell(hour, minute);
+                }
+            }
+
+            // Reset button click count
+            buttonClickCount = 0;
+            clickCount.textContent = '0';
+
+            // Clear graph data and reinitialize with starting point
+            graphData.length = 0;
+            graphData.push({ clicks: 0, emptyCells: 1440 });
+            drawGraph();
+
+            // Update empty cell count
+            updateEmptyCellCount();
+
+            // Stop filling if active
+            if (isFilling) {
+                isFilling = false;
+                if (fillTimeoutId !== null) {
+                    clearTimeout(fillTimeoutId);
+                    fillTimeoutId = null;
+                }
+                fillAllCellsBtn.disabled = false;
+                fillAllCellsBtn.textContent = 'Fill All Cells';
+            }
+        }
+
+        // Function to add multiple random cells
+        function addRandomCells() {
+            buttonClickCount++;
+            clickCount.textContent = buttonClickCount;
+            
+            const count = parseInt(cellCountSlider.value);
+            for (let i = 0; i < count; i++) {
+                addRandomCell();
+            }
+            
+            updateEmptyCellCount();
+            addGraphDataPoint();
+        }
+
+        // Function to fill all cells until no empty cells remain
+        function fillAllCells() {
+            if (isFilling) {
+                return; // Prevent multiple simultaneous fills
+            }
+
+            isFilling = true;
+            fillAllCellsBtn.disabled = true;
+            fillAllCellsBtn.textContent = 'Filling...';
+
+            // Start a new iteration
+            currentIteration++;
+            iterationStartClicks = buttonClickCount;
+            iterationStartEmptyCells = countEmptyCells();
+            let iterationClicks = 0;
+            let daysForLastCell = undefined;
+
+            function continueFilling() {
+                // Check if filling was stopped
+                if (!isFilling) {
+                    return;
+                }
+
+                const emptyCount = countEmptyCells();
+                
+                // Track when we have 1 empty cell remaining
+                if (emptyCount === 1 && daysForLastCell === undefined) {
+                    daysForLastCell = iterationClicks;
+                }
+                
+                if (emptyCount === 0) {
+                    // All cells filled - record final iteration
+                    const cellsAdded = iterationStartEmptyCells - emptyCount;
+                    addTableRow(currentIteration, cellsAdded, iterationClicks, daysForLastCell);
+                    addGraphDataPoint();
+                    
+                    isFilling = false;
+                    fillAllCellsBtn.disabled = false;
+                    fillAllCellsBtn.textContent = 'Fill All Cells';
+                    updateEmptyCellCount();
+                    fillTimeoutId = null;
+                    return;
+                }
+
+                // Add cells in batches for better performance
+                const batchSize = parseInt(cellCountSlider.value);
+                for (let i = 0; i < batchSize; i++) {
+                    addRandomCell();
+                }
+
+                buttonClickCount++;
+                iterationClicks++;
+                clickCount.textContent = buttonClickCount;
+                updateEmptyCellCount();
+                addGraphDataPoint();
+
+                // Continue filling with a small delay to allow UI updates
+                fillTimeoutId = setTimeout(continueFilling, 10);
+            }
+
+            continueFilling();
+        }
+
+        // Create hour labels (0-23)
+        for (let hour = 0; hour < 24; hour++) {
+            const label = document.createElement('div');
+            label.className = 'hour-label';
+            label.textContent = hour.toString().padStart(2, '0');
+            hourLabels.appendChild(label);
+        }
+
+        // Create minute labels (show every 10 minutes for readability)
+        for (let minute = 0; minute < 60; minute++) {
+            const label = document.createElement('div');
+            label.className = 'minute-label';
+            if (minute % 10 === 0) {
+                label.textContent = minute;
+            }
+            minuteLabels.appendChild(label);
+        }
+
+        // Create grid: 24 rows (hours) x 60 columns (minutes)
+        for (let hour = 0; hour < 24; hour++) {
+            const row = document.createElement('div');
+            row.className = 'row';
+            
+            for (let minute = 0; minute < 60; minute++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.setAttribute('data-hour', hour);
+                cell.setAttribute('data-minute', minute);
+                cell.setAttribute('data-value', 0);
+                cell.title = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} - 0`;
+                row.appendChild(cell);
+            }
+            
+            grid.appendChild(row);
+        }
+
+        // Slider value display update
+        cellCountSlider.addEventListener('input', (e) => {
+            sliderValue.textContent = e.target.value;
+        });
+
+        // Button event listeners
+        randomCellBtn.addEventListener('click', addRandomCells);
+        fillAllCellsBtn.addEventListener('click', fillAllCells);
+        clearBtn.addEventListener('click', clearSimulation);
+
+        // Initialize graph with starting point
+        graphData.push({ clicks: 0, emptyCells: 1440 });
+        drawGraph();
+    </script>
+</body>
+</html>
+

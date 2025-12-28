@@ -1,0 +1,18 @@
+{
+  "name": "every-minute-of-the-day",
+  "version": "1.0.0",
+  "description": "A time simulation visualization tracking events across all minutes of a day",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "time",
+    "simulation",
+    "visualization",
+    "calendar"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
